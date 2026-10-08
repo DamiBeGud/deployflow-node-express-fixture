@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-express-service-config
+  namespace: deployflow-test
+  labels:
+    app.kubernetes.io/name: node-express-service
+    app.kubernetes.io/managed-by: deployflow
+    app.kubernetes.io/instance: 9f2e75db-987d-46e7-8174-48af165c4fd8
+data:
+  PORT: '4587'
+  HOST: 0.0.0.0
+  NODE_ENV: production
