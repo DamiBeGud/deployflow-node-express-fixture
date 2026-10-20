@@ -1,0 +1,61 @@
+name: DeployFlow build
+'on':
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+env:
+  IMAGE: ghcr.io/damibegud/deployflow-node-express-fixture
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: npm
+    - run: npm ci
+    - run: npm test
+    - run: docker build --file Dockerfile .
+  publish:
+    if: github.event_name == 'push'
+    needs:
+    - test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - uses: actions/checkout@v4
+    - uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - id: image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ env.IMAGE }}:${{ github.sha }}
+    - name: Write verified-build candidate
+      env:
+        REPOSITORY_ID: ${{ github.event.repository.id }}
+        IMAGE_DIGEST: ${{ steps.image.outputs.digest }}
+      run: "python3 - <<'PY'\nimport json\nimport os\nwith open('deployflow-build.json',\
+        \ 'w', encoding='utf-8') as output:\n    json.dump({\n        'repository_id':\
+        \ int(os.environ['REPOSITORY_ID']),\n        'commit_sha': os.environ['GITHUB_SHA'],\n\
+        \        'run_id': int(os.environ['GITHUB_RUN_ID']),\n        'run_attempt':\
+        \ int(os.environ['GITHUB_RUN_ATTEMPT']),\n        'image_repository': os.environ['IMAGE'],\n\
+        \        'image_digest': os.environ['IMAGE_DIGEST'],\n    }, output, sort_keys=True)\n\
+        PY"
+    - uses: actions/upload-artifact@v4
+      with:
+        name: deployflow-build
+        path: deployflow-build.json
