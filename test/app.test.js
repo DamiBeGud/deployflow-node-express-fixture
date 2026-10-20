@@ -3,6 +3,23 @@ import test from "node:test";
 
 import { createApp } from "../src/app.js";
 
+test("application endpoints identify the second deployment test release", async () => {
+  const server = createApp().listen(0);
+  const { port } = server.address();
+
+  try {
+    for (const path of ["/", "/api/info"]) {
+      const response = await fetch(`http://127.0.0.1:${port}${path}`);
+      assert.equal(response.status, 200);
+      assert.equal((await response.json()).release, "phase7-release-2");
+    }
+  } finally {
+    await new Promise((resolve, reject) => {
+      server.close((error) => (error ? reject(error) : resolve()));
+    });
+  }
+});
+
 test("health endpoint reports an ok service", async () => {
   const server = createApp().listen(0);
   const { port } = server.address();

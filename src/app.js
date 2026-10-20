@@ -1,6 +1,7 @@
 import express from "express";
 
 const DEFAULT_PORT = 4587;
+const RELEASE = "phase7-release-2";
 
 export function createApp() {
   const app = express();
@@ -11,6 +12,7 @@ export function createApp() {
   app.get("/", (_request, response) => {
     response.json({
       service: "node-express-service-fixture",
+      release: RELEASE,
       message: process.env.APP_GREETING || "Hello from the Express fixture",
       environment: process.env.NODE_ENV || "development",
     });
@@ -23,6 +25,7 @@ export function createApp() {
   app.get("/api/info", (_request, response) => {
     response.json({
       service: "node-express-service-fixture",
+      release: RELEASE,
       port: Number(process.env.PORT || DEFAULT_PORT),
       hasGreetingConfiguration: Boolean(process.env.APP_GREETING),
     });
