@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slaven-test
+  namespace: deployflow-test
+  labels: &id001
+    app.kubernetes.io/name: slaven-test
+    app.kubernetes.io/managed-by: deployflow
+    app.kubernetes.io/instance: 708446f7-8487-4baf-9b71-1716ab18befd
+spec:
+  replicas: 2
+  selector:
+    matchLabels: *id001
+  template:
+    metadata:
+      labels: *id001
+      annotations:
+        deployflow.io/config-sha256: 0780ce56ab2db64f83b3ddf83d34574621f408602b077dbc64a72679759cb473
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: slaven-test
+        image: ghcr.io/damibegud/deployflow-node-express-fixture:225b2d81df0c80d49da94b01ad0721415db052be
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4587
+          name: http
+        envFrom:
+        - configMapRef:
+            name: slaven-test-config
+        env: []
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
