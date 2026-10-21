@@ -13,6 +13,7 @@ export function createApp() {
     response.json({
       service: "node-express-service-fixture",
       release: RELEASE,
+      cdTest: "local-k3s-cd-1",
       message: process.env.APP_GREETING || "Hello from the Express fixture",
       environment: process.env.NODE_ENV || "development",
     });
@@ -26,6 +27,7 @@ export function createApp() {
     response.json({
       service: "node-express-service-fixture",
       release: RELEASE,
+      cdTest: "local-k3s-cd-1",
       port: Number(process.env.PORT || DEFAULT_PORT),
       hasGreetingConfiguration: Boolean(process.env.APP_GREETING),
     });
