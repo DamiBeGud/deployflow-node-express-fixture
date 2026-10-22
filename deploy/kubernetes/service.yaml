@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-express-service2
+  namespace: deployflow-test
+  labels: &id001
+    app.kubernetes.io/name: node-express-service2
+    app.kubernetes.io/managed-by: deployflow
+    app.kubernetes.io/instance: 2202caf2-759b-4fd2-84c2-58f8fac226ba
+spec:
+  type: ClusterIP
+  selector: *id001
+  ports:
+  - name: http
+    port: 4587
+    targetPort: http
