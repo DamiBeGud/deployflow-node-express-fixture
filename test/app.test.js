@@ -3,7 +3,7 @@ import test from "node:test";
 
 import { createApp } from "../src/app.js";
 
-test("application endpoints identify the second deployment test release", async () => {
+test("application endpoints identify the next automatic deployment test release", async () => {
   const server = createApp().listen(0);
   const { port } = server.address();
 
@@ -11,7 +11,9 @@ test("application endpoints identify the second deployment test release", async 
     for (const path of ["/", "/api/info"]) {
       const response = await fetch(`http://127.0.0.1:${port}${path}`);
       assert.equal(response.status, 200);
-      assert.equal((await response.json()).release, "phase7-release-2");
+      const payload = await response.json();
+      assert.equal(payload.release, "phase7-release-3");
+      assert.equal(payload.cdTest, "hosted-k3s-cd-20261023");
     }
   } finally {
     await new Promise((resolve, reject) => {
