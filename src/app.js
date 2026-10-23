@@ -1,7 +1,7 @@
 import express from "express";
 
 const DEFAULT_PORT = 4587;
-const RELEASE = "phase7-release-3";
+const RELEASE = "phase7-release-4";
 
 export function createApp() {
   const app = express();
@@ -13,7 +13,7 @@ export function createApp() {
     response.json({
       service: "node-express-service-fixture",
       release: RELEASE,
-      cdTest: "hosted-k3s-cd-20261023",
+      cdTest: "hosted-k3s-cd-20261023-pr",
       message: process.env.APP_GREETING || "Hello from the Express fixture",
       environment: process.env.NODE_ENV || "development",
     });
@@ -27,7 +27,7 @@ export function createApp() {
     response.json({
       service: "node-express-service-fixture",
       release: RELEASE,
-      cdTest: "hosted-k3s-cd-20261023",
+      cdTest: "hosted-k3s-cd-20261023-pr",
       port: Number(process.env.PORT || DEFAULT_PORT),
       hasGreetingConfiguration: Boolean(process.env.APP_GREETING),
     });
