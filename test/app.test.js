@@ -12,8 +12,8 @@ test("application endpoints identify the next automatic deployment test release"
       const response = await fetch(`http://127.0.0.1:${port}${path}`);
       assert.equal(response.status, 200);
       const payload = await response.json();
-      assert.equal(payload.release, "phase7-release-4");
-      assert.equal(payload.cdTest, "hosted-k3s-cd-20261023-pr");
+      assert.equal(payload.release, "phase7-release-5");
+      assert.equal(payload.cdTest, "hosted-k3s-cd-20261023-direct");
     }
   } finally {
     await new Promise((resolve, reject) => {
